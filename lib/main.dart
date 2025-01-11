@@ -32,6 +32,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String _querySearch = "";// переменная состояния запроса
+  late  List<Person> _filteredPersons;// переменная для отфильтрофанных значений, late означает что переменная будет объявлена позже
   int _selectedIndex = 0;
 
   // Список персонажей
@@ -66,6 +68,22 @@ class _HomeScreenState extends State<HomeScreen> {
       _selectedIndex = index;
     });
   }
+  void initState(){
+    super.initState();
+    _filteredPersons = persons; // назначаем что при пустой строке поиска будет показываться весь список персов
+  }
+  void _filterPersons(String query){
+    setState(() {
+      _querySearch = query;
+      if (query.isEmpty){
+       _filteredPersons = persons;// булевое значение, если строка пуста то возвращается true или же весь наш список
+      } else{
+        _filteredPersons = persons.where((Person){//.where в Dart — это метод для фильтрации элементов в коллекциях, таких как списки. Он принимает функцию-предикат в качестве аргумента и возвращает новый итерабельный объект, содержащий только элементы, которые удовлетворяют условию.
+          return Person.name.toLowerCase().contains(query.toLowerCase());// contains сверяет данные в именах персонажей и в запросе
+        }).toList();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SliverAppBar(
             bottom: PreferredSize(
               preferredSize:  Size.fromHeight(48),
-              child: SearchBotton(theme: theme),
+              child: SearchBotton(theme: theme, onSearch: _filterPersons,),
             ),
 
             pinned: true,
@@ -150,8 +168,10 @@ class SearchBotton extends StatelessWidget {
   const SearchBotton({
     super.key,
     required this.theme,
+    required this.onSearch,
   });
   final ThemeData theme;
+  final Function(String) onSearch;
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +182,7 @@ class SearchBotton extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         color: theme.highlightColor,
       ),
-      child: Row(
+      child:  Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
@@ -171,18 +191,23 @@ class SearchBotton extends StatelessWidget {
                 padding: const EdgeInsets.only( left: 15, top: 12, bottom: 12),
                 child: const Icon(Icons.search_rounded),
               ),
+
               Container(
+
                 margin: const EdgeInsets.only(left: 10,right: 59),
                 padding: const EdgeInsets.only( top: 12, bottom: 12),
+
                 child: Text(
                   'Найти персонажа',
-                  style: TextStyle(
+                 style: TextStyle(
                     fontWeight: FontWeight.w400,
                     color: theme.hintColor,
                     fontSize: 16,
                   ),
+                    //border: InputBorder.none,
+                  ),
                 ),
-              ),
+
             ],
           ),
           Padding(
