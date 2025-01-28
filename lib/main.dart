@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'package:rickmorty/Registr_Screen.dart';
+import 'package:rickmorty/episode.dart';
+import 'package:rickmorty/login_screen.dart';
+import 'package:rickmorty/settings_screen.dart';
+
+
 void main() {
 
   runApp(const MyApp());
@@ -15,11 +21,16 @@ class MyApp extends StatelessWidget {
       title: 'Rick Morty',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: primaryColor,
-        colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
+        primaryColor: const Color(0xfff152a3a),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xfff152a3a)),
         useMaterial3: true,
       ),
-      home: const HomeScreen(),
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => LoginScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/reg':(context) => const RegScreen(),
+      },
     );
   }
 }
@@ -32,8 +43,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String querySearch = ""; // переменная состояния запроса
-  late List<Person> _filteredPersons; // переменная для отфильтрофанных значений // late означает что переменная будет определена позже
+  String querySearch = "";
+  late List<Person> _filteredPersons;
   int _selectedIndex = 0;
 
   // Список персонажей
@@ -52,31 +63,84 @@ class _HomeScreenState extends State<HomeScreen> {
     Person('Алан Райлс', 'Человек, Мужской', false, 'assets/images/Alan.jpg'),
   ];
 
-  // Функция для изменения выбранного индекса
+  // Список эпизодов
+  final List<Episode> episodes = [
+    Episode("Пилот", "2 декабря 2013", "S01E01"),
+    Episode("Собаки-разрушители", "9 декабря 2013", "S01E02"),
+    Episode("Анатомический парк", "16 декабря 2013", "S01E03"),
+    Episode("Мистер Жвачка", "13 января 2014", "S01E04"),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredPersons = persons;
+  }
+
+  void _filterPersons(String query) {
+    setState(() {
+      querySearch = query;
+      if (query.isEmpty) {
+        _filteredPersons = persons;
+      } else {
+        _filteredPersons = persons.where((person) {
+          return person.name.toLowerCase().contains(query.toLowerCase());
+        }).toList();
+      }
+    });
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _filteredPersons = persons; // initState используется для инициализации нашей переменой чтоб изначально показывался весь список
-  }
-
-  void _filterPersons(String query) {
-    setState(() {
-      querySearch = query;
-      if (query.isEmpty) { // булевое значение, если строка пуста то возвращается true или же весь наш список
-
-        _filteredPersons = persons;
-      } else {
-        _filteredPersons = persons.where((person) {
-          return person.name.toLowerCase().contains(query.toLowerCase());// это метод для фильтрации элементов в коллекциях, таких как списки. Он принимает функцию-предикат в качестве аргумента и возвращает новый итерабельный объект, содержащий только элементы, которые удовлетворяют условию.
-        }).toList();// contains сверяет данные в именах персонажей и в запросе
-      }
-    });
+  Widget _getSelectedScreen() {
+    switch (_selectedIndex) {
+      case 0:
+        return Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(left: 16, right: 15, bottom: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4, bottom: 4),
+                    child: Text(
+                      'ВСЕГО ПЕРСОНАЖЕЙ: ${persons.length}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xfff5B6975),
+                        fontSize: 10,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(right: 14),
+                    child: Icon(Icons.grid_view_outlined, color: Color(0xfff5B6975)),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: PersonsList(persons: _filteredPersons),
+            ),
+          ],
+        );
+      case 2:
+        return EpisodesList(episodes: episodes);
+      case 3:return SettingsScreen();
+      default:
+        return const Center(
+          child: Text(
+            'Раздел в разработке',
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+    }
   }
 
   @override
@@ -85,42 +149,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        automaticallyImplyLeading: false,// убрал отступы по умолчанию
+        automaticallyImplyLeading: false,
         backgroundColor: const Color(0xfff0B1E2D),
         title: SearchBotton(theme: theme, onSearch: _filterPersons),
-        
       ),
-      body: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(left: 16, right: 15, bottom: 20,),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 4, bottom: 4),
-                  child: Text(
-                    'ВСЕГО ПЕРСОНАЖЕЙ: ${persons.length}',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xfff5B6975),
-                        fontSize: 10,
-                        letterSpacing: 1.5
-                    ),
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(right: 14),
-                  child: Icon(Icons.grid_view_outlined, color: Color(0xfff5B6975)),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: PersonsList(persons: _filteredPersons),
-          ),
-        ],
-      ),
+      body: _getSelectedScreen(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -130,6 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
         items: [
           BottomNavigationBarItem(
             backgroundColor: theme.primaryColor,
+            
             icon: const ImageIcon(AssetImage('assets/images/guest.png')),
             label: 'Персонажи',
           ),
@@ -168,16 +202,16 @@ class SearchBotton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(left: 16,right: 16,top: 11,bottom:  20,),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: Color(0xfff152A3A) ,
+        color: const Color(0xfff152A3A),
       ),
       child: Row(
         children: [
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 10),
-            child: const Icon(Icons.search_rounded,color: Color(0xfff5B6975),),
+            child: const Icon(Icons.search_rounded, color: Color(0xfff5B6975)),
           ),
           Expanded(
             child: TextField(
@@ -186,17 +220,19 @@ class SearchBotton extends StatelessWidget {
                 border: InputBorder.none,
                 hintText: 'Найти персонажа',
               ),
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.w400,
                 color: Color(0xfff5B6975),
                 fontSize: 16,
               ),
             ),
           ),
-          Container(child: Text('|',style: TextStyle(color: Color(0xfff5B6975)),),),
+          Container(
+            child: const Text('|', style: TextStyle(color: Color(0xfff5B6975))),
+          ),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 10),
-            child: const Icon(Icons.filter_alt_outlined,color: Color(0xfff5B6975),),
+            child: const Icon(Icons.filter_alt_outlined, color: Color(0xfff5B6975)),
           ),
         ],
       ),
@@ -204,12 +240,12 @@ class SearchBotton extends StatelessWidget {
   }
 }
 
-
 class Person {
   final String name;
   final String status;
   final bool state;
   final String imagePath;
+
   Person(this.name, this.status, this.state, this.imagePath);
 }
 
