@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 class Episode {
   final String name;
@@ -46,7 +45,7 @@ class EpisodesList extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${episode.airDate}",
+                  episode.airDate,
                   style: TextStyle(
                     color: Colors.grey[400],
                     fontSize: 12,

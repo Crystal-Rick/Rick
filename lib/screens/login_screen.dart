@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rickmorty/Registr_Screen.dart';
-import 'package:rickmorty/episode.dart';
-import 'package:rickmorty/main.dart';
+import 'package:rickmorty/screens/Registr_Screen.dart';
+import 'package:rickmorty/screens/home_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -14,10 +13,12 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              margin: const EdgeInsets.only(left: 58, right: 52, top: 21, bottom: 66),
-              child: const Image(image: AssetImage('assets/images/logo.png')),
-            ),
+           const SizedBox(height: 21,),
+           const SizedBox(width: 58,),
+            SafeArea(
+              child: const Image(image: AssetImage('assets/images/logo.png')),),
+            const SizedBox(height: 66,),
+            const SizedBox(width: 52,),
 
             // Поле "Логин"
             Container(
@@ -25,6 +26,7 @@ class LoginScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   const Text(
                     "Логин",
                     style: TextStyle(
@@ -33,10 +35,11 @@ class LoginScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+
                   const SizedBox(height: 8),
                   TextField(
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.person, color: Colors.grey),
+                      prefixIcon: const ImageIcon(AssetImage('assets/images/User.png'),color: Color(0xfff5B6975),),
                       hintText: 'Логин',
                       filled: true,
                       fillColor: const Color(0xfff152A3A),
@@ -45,8 +48,8 @@ class LoginScreen extends StatelessWidget {
                         borderSide: BorderSide.none,
                       ),
                     ),
-                    style: const TextStyle(color: Colors.white),
                   ),
+
                 ],
               ),
             ),
@@ -69,7 +72,7 @@ class LoginScreen extends StatelessWidget {
                   TextField(
                     obscureText: true,
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.password_outlined, color: Colors.grey),
+                      prefixIcon: const ImageIcon(AssetImage('assets/images/password.png'),color: Color(0xfff5B6975),),
                       hintText: 'Пароль',
                       filled: true,
                       fillColor: const Color(0xfff152A3A),
@@ -109,20 +112,19 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              
             ),
             Container(
-              margin: EdgeInsets.only(left:  28,right: 28,top: 24,bottom:28),
+              margin: const EdgeInsets.only(left:  28,right: 28,top: 24,bottom:28),
 
               child:Row(
                 mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('У вас еще нет аккаунта?',style: TextStyle(color: Colors.grey),),
+                const Text('У вас еще нет аккаунта?',style: TextStyle(color: Color(0xfff5B6975)),),
                 const SizedBox(width: 5,),
                 GestureDetector(onTap: (){
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => RegScreen()),
+                    MaterialPageRoute(builder: (context) => const RegScreen()),
                   );
 
                 },
