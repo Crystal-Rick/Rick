@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const primaryColor = Color(0xfff152a3a); // цвет фона для навигации
+// цвет фона для навигации
     return MaterialApp(
       title: 'Rick Morty',
       debugShowCheckedModeBanner: false,
